@@ -12,6 +12,22 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 const url = "https://ww1.streamm4u.net/home";
 const headers = { "User-Agent": "customUserAgent" };
+
+//update the json fie ("movieData.json")
+var tempResult;
+function updateMovieData(movieData) {
+  try {
+    // Convert the movieData object to JSON string
+    const jsonData = JSON.stringify(movieData, null, 2);
+
+    // Write the updated JSON data to the file
+    fs.writeFileSync("movieData.json", jsonData);
+
+    console.log("Movie data updated successfully!");
+  } catch (error) {
+    console.error(`Error updating movie data: ${error}`);
+  }
+}
 //initialize
 axios("https://ww1.streamm4u.net/home", { headers })
   .then((res) => {
@@ -26,6 +42,7 @@ axios("https://ww1.streamm4u.net/home", { headers })
     const movieDesc = [];
     const movieRating = [];
     //console.log($(".tiptitle p").text());
+
     //for movie title
     $(".tiptitle p", htmlData).each((index, element) => {
       const title = $(element).text();
@@ -54,10 +71,10 @@ axios("https://ww1.streamm4u.net/home", { headers })
       movieData[i][`description`] = movieDesc[i].description;
       movieData[i][`rating`] = movieRating[i].rating;
     }
-
+    tempResult = movieData;
     console.log(movieData);
   })
 
   .catch((error) => console.error(error));
-
+updateMovieData(tempResult);
 app.listen(PORT, () => console.log(`Server is listening to port ${PORT}`));
